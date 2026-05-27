@@ -1,32 +1,24 @@
-import React, { useState } from 'react'
-import { useLocation } from 'react-router-dom'
-import RequestModal from './RequestModal'
+import React, { useState } from "react";
+import { useLocation } from "react-router-dom";
+import RequestModal from "./RequestModal";
 
 export default function RequestButton() {
+  const [open, setOpen] = useState(false);
 
-  const [open, setOpen] = useState(false)
-
-  const location = useLocation()
+  const location = useLocation();
 
   // HIDE ON ADMIN PAGES
-  if (location.pathname.startsWith('/admin')) {
-    return null
+  if (location.pathname.startsWith("/admin")) {
+    return null;
   }
 
   return (
     <>
-      <button
-        className="request-float-btn"
-        onClick={() => setOpen(true)}
-      >
+      <button className="request-float-btn" onClick={() => setOpen(true)}>
         ✨ Request Gadget
       </button>
 
-      {open && (
-        <RequestModal
-          onClose={() => setOpen(false)}
-        />
-      )}
+      {open && <RequestModal onClose={() => setOpen(false)} />}
     </>
-  )
+  );
 }

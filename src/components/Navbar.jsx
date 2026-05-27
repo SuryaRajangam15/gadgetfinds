@@ -1,177 +1,194 @@
-import React, { useEffect, useState } from 'react'
-import { Link, NavLink, useNavigate } from 'react-router-dom'
-import { useAuth } from '../context/AuthContext'
-import { toast } from '../hooks/useToast'
+import React, { useEffect, useState } from "react";
+import { Link, NavLink, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import { toast } from "../hooks/useToast";
 
 export default function Navbar() {
-  const { isAdmin, signOut, handleLogoClick, signIn } = useAuth()
-  const [scrolled, setScrolled]   = useState(false)
-  const [showLogin, setShowLogin] = useState(false)
-  const [email, setEmail]         = useState('')
-  const [pass, setPass]           = useState('')
-  const [loginErr, setLoginErr]   = useState('')
-  const [busy, setBusy]           = useState(false)
-  const navigate = useNavigate()
-const [mobileMenu, setMobileMenu] = useState(false)
+  const { isAdmin, signOut, handleLogoClick, signIn } = useAuth();
+  const [scrolled, setScrolled] = useState(false);
+  const [showLogin, setShowLogin] = useState(false);
+  const [email, setEmail] = useState("");
+  const [pass, setPass] = useState("");
+  const [loginErr, setLoginErr] = useState("");
+  const [busy, setBusy] = useState(false);
+  const navigate = useNavigate();
+  const [mobileMenu, setMobileMenu] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
-    const h = () => setScrolled(window.scrollY > 10)
-    window.addEventListener('scroll', h)
-    return () => window.removeEventListener('scroll', h)
-  }, [])
+    const h = () => setScrolled(window.scrollY > 10);
+    window.addEventListener("scroll", h);
+    return () => window.removeEventListener("scroll", h);
+  }, []);
 
   async function logout() {
-    await signOut()
-    toast('Logged out successfully')
-    navigate('/')
+    await signOut();
+    toast("Logged out successfully");
+    navigate("/");
   }
 
   function openLoginModal() {
-    setEmail(''); setPass(''); setLoginErr(''); setShowLogin(true)
+    setEmail("");
+    setPass("");
+    setLoginErr("");
+    setShowLogin(true);
   }
 
   async function handleLogin(e) {
-    e.preventDefault()
-    setLoginErr(''); setBusy(true)
+    e.preventDefault();
+    setLoginErr("");
+    setBusy(true);
     try {
-      const user = await signIn(email, pass)
-      if (user?.user_metadata?.role !== 'admin') {
-        const { supabase } = await import('../lib/supabase')
-        await supabase.auth.signOut()
-        setLoginErr('This account does not have admin access.')
-        setBusy(false); return
+      const user = await signIn(email, pass);
+      if (user?.user_metadata?.role !== "admin") {
+        const { supabase } = await import("../lib/supabase");
+        await supabase.auth.signOut();
+        setLoginErr("This account does not have admin access.");
+        setBusy(false);
+        return;
       }
-      setShowLogin(false)
-      toast('Welcome back, Surya! 👋', 'success')
-      navigate('/admin')
-    } catch(err) {
-      setLoginErr(err.message || 'Incorrect email or password.')
+      setShowLogin(false);
+      toast("Welcome back, Surya! 👋", "success");
+      navigate("/admin");
+    } catch (err) {
+      setLoginErr(err.message || "Incorrect email or password.");
     }
-    setBusy(false)
+    setBusy(false);
   }
 
-  const lc = ({ isActive }) => 'nav-link' + (isActive ? ' active' : '')
+  const lc = ({ isActive }) => "nav-link" + (isActive ? " active" : "");
 
   return (
     <>
-      <nav className={scrolled ? 'navbar scrolled' : 'navbar'}>
+      <nav className={scrolled ? "navbar scrolled" : "navbar"}>
         <div className="nav-inner">
-          <div className="nav-logo"
+          <div
+            className="nav-logo"
             onClick={() => handleLogoClick(openLoginModal)}
-            style={{ cursor:'pointer' }}>
+            style={{ cursor: "pointer" }}
+          >
             <div className="nav-logo-mark">⚡</div>
             <div>
-              <div className="nav-logo-text"><span>Gadget</span>Finds.in</div>
-              <div className="nav-logo-sub">by Surya • Budget Tech Gadgets 🔥</div>
+              <div className="nav-logo-text">
+                <span>Gadget</span>Finds.in
+              </div>
+              <div className="nav-logo-sub">
+                by Surya • Budget Tech Gadgets 🔥
+              </div>
             </div>
           </div>
 
           <div className="nav-links">
-            <NavLink to="/" end className={lc}>Home</NavLink>
-            <NavLink to="/products"   className={lc}>Products</NavLink>
-            <NavLink to="/categories" className={lc}>Categories</NavLink>
-            <NavLink to="/about"      className={lc}>About</NavLink>
+            <NavLink to="/" end className={lc}>
+              Home
+            </NavLink>
+            <NavLink to="/products" className={lc}>
+              Products
+            </NavLink>
+            <NavLink to="/categories" className={lc}>
+              Categories
+            </NavLink>
+            <NavLink to="/about" className={lc}>
+              About
+            </NavLink>
           </div>
 
           <div className="nav-right">
-            <button className="btn btn-primary btn-sm nav-pinterest-btn"
-              onClick={() => window.open('https://pinterest.com/budgettechsurya','_blank')}>
+            <button
+              className="btn btn-primary btn-sm nav-pinterest-btn"
+              onClick={() =>
+                window.open("https://pinterest.com/budgettechsurya", "_blank")
+              }
+            >
               📌 Pinterest
             </button>
             {isAdmin && (
-              <button className="btn btn-outline btn-sm"
-                onClick={() => navigate('/admin')}>🔐 Admin</button>
+              <button
+                className="btn btn-outline btn-sm"
+                onClick={() => navigate("/admin")}
+              >
+                🔐 Admin
+              </button>
             )}
-            
-            <Link to="/products" className="btn btn-primary btn-sm">Browse Gadgets</Link>
+
+            <Link to="/products" className="btn btn-primary btn-sm">
+              Browse Gadgets
+            </Link>
           </div>
         </div>
       </nav>
 
-            {/* MOBILE ACTION BUTTONS */}
+      {/* MOBILE ACTION BUTTONS */}
 
-{mobileMenu && (
+      {mobileMenu && (
+        <div className="mobile-action-buttons">
+          <button
+            className="btn btn-primary btn-sm"
+            onClick={() =>
+              window.open("https://pinterest.com/budgettechsurya", "_blank")
+            }
+          >
+            📌 Pinterest
+          </button>
 
-  <div className="mobile-action-buttons">
+          {isAdmin && (
+            <button
+              className="btn btn-outline btn-sm"
+              onClick={() => navigate("/admin")}
+            >
+              🔐 Admin
+            </button>
+          )}
 
-    <button
-      className="btn btn-primary btn-sm"
-      onClick={() =>
-        window.open(
-          'https://pinterest.com/budgettechsurya',
-          '_blank'
-        )
-      }
-    >
-      📌 Pinterest
-    </button>
+          <Link to="/products" className="btn btn-primary btn-sm">
+            Browse Gadgets
+          </Link>
+        </div>
+      )}
 
-    {isAdmin && (
+      {/* MOBILE BOTTOM NAV */}
+      <div className="mobile-bottom-nav">
+        <NavLink
+          to="/"
+          className={({ isActive }) =>
+            "mobile-bottom-link" + (isActive ? " active" : "")
+          }
+        >
+          <div className="mobile-bottom-icon">🏠</div>
+          <span>Home</span>
+        </NavLink>
 
-      <button
-        className="btn btn-outline btn-sm"
-        onClick={() => navigate('/admin')}
-      >
-        🔐 Admin
-      </button>
+        <NavLink
+          to="/products"
+          className={({ isActive }) =>
+            "mobile-bottom-link" + (isActive ? " active" : "")
+          }
+        >
+          <div className="mobile-bottom-icon">🛍️</div>
+          <span>Products</span>
+        </NavLink>
 
-    )}
+        <NavLink
+          to="/categories"
+          className={({ isActive }) =>
+            "mobile-bottom-link" + (isActive ? " active" : "")
+          }
+        >
+          <div className="mobile-bottom-icon">📂</div>
+          <span>Categories</span>
+        </NavLink>
 
-    <Link
-      to="/products"
-      className="btn btn-primary btn-sm"
-    >
-      Browse Gadgets
-    </Link>
+        <NavLink
+          to="/about"
+          className={({ isActive }) =>
+            "mobile-bottom-link" + (isActive ? " active" : "")
+          }
+        >
+          <div className="mobile-bottom-icon">🧑🏻‍💼</div>
+          <span>About</span>
+        </NavLink>
 
-  </div>
-
-)}
-
-{/* MOBILE BOTTOM NAV */}
-<div className="mobile-bottom-nav">
-
-  <NavLink
-    to="/"
-    className={({isActive}) =>
-      'mobile-bottom-link' + (isActive ? ' active' : '')
-    }
-  >
-    <div className="mobile-bottom-icon">🏠</div>
-    <span>Home</span>
-  </NavLink>
-
-  <NavLink
-    to="/products"
-    className={({isActive}) =>
-      'mobile-bottom-link' + (isActive ? ' active' : '')
-    }
-  >
-    <div className="mobile-bottom-icon">🛍️</div>
-    <span>Products</span>
-  </NavLink>
-
-  <NavLink
-    to="/categories"
-    className={({isActive}) =>
-      'mobile-bottom-link' + (isActive ? ' active' : '')
-    }
-  >
-    <div className="mobile-bottom-icon">📂</div>
-    <span>Categories</span>
-  </NavLink>
-
-  <NavLink
-    to="/about"
-    className={({isActive}) =>
-      'mobile-bottom-link' + (isActive ? ' active' : '')
-    }
-  >
-    <div className="mobile-bottom-icon">🧑🏻‍💼</div>
-    <span>About</span>
-  </NavLink>
-
-  {/* <a
+        {/* <a
     href="/about"
     target="_blank"
     rel="noreferrer"
@@ -181,20 +198,23 @@ const [mobileMenu, setMobileMenu] = useState(false)
     <span>About</span>
   </a> */}
 
-  <button
-  className="mobile-bottom-link mobile-menu-btn"
-  onClick={() => setMobileMenu(!mobileMenu)}
->
-  <div className="mobile-bottom-icon">☰</div>
-  <span>Menu</span>
-</button>
-
-</div>
+        <button
+          className="mobile-bottom-link mobile-menu-btn"
+          onClick={() => setMobileMenu(!mobileMenu)}
+        >
+          <div className="mobile-bottom-icon">☰</div>
+          <span>Menu</span>
+        </button>
+      </div>
       {showLogin && (
-        <div className="modal-overlay"
-          onClick={e => e.target === e.currentTarget && setShowLogin(false)}>
+        <div
+          className="modal-overlay"
+          onClick={(e) => e.target === e.currentTarget && setShowLogin(false)}
+        >
           <div className="modal">
-            <button className="modal-close" onClick={() => setShowLogin(false)}>✕</button>
+            <button className="modal-close" onClick={() => setShowLogin(false)}>
+              ✕
+            </button>
             <div className="modal-icon">🔐</div>
             <h2>Admin Login</h2>
             <p>Sign in with your Supabase admin account</p>
@@ -202,24 +222,51 @@ const [mobileMenu, setMobileMenu] = useState(false)
             <form onSubmit={handleLogin}>
               <div className="form-group">
                 <label className="form-label">Email</label>
-                <input type="email" className="form-input"
+                <input
+                  type="email"
+                  className="form-input"
                   placeholder="admin@youremail.com"
-                  value={email} onChange={e => setEmail(e.target.value)} required/>
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
               </div>
               <div className="form-group">
-                <label className="form-label">Password</label>
-                <input type="password" className="form-input"
-                  placeholder="Your password"
-                  value={pass} onChange={e => setPass(e.target.value)} required/>
+                <div className="form-group">
+                  <label className="form-label">Password</label>
+
+                  <div className="password-field">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      value={pass}
+                      onChange={(e) => setPass(e.target.value)}
+                      placeholder="Password"
+                      className="form-input"
+                      required
+                    />
+
+                    <button
+                      type="button"
+                      className="password-toggle"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? "🙈" : "👁"}
+                    </button>
+                  </div>
+                </div>
               </div>
-              <button type="submit" className="btn btn-primary"
-                style={{ width:'100%', justifyContent:'center' }} disabled={busy}>
-                {busy ? 'Logging in…' : 'Login →'}
+              <button
+                type="submit"
+                className="btn btn-primary"
+                style={{ width: "100%", justifyContent: "center" }}
+                disabled={busy}
+              >
+                {busy ? "Logging in…" : "Login →"}
               </button>
             </form>
           </div>
         </div>
       )}
     </>
-  )
+  );
 }

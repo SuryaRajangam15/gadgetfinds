@@ -1,5 +1,4 @@
 export const productMemoryCache = {
-
   homeProducts: null,
 
   products: null,
@@ -8,6 +7,5 @@ export const productMemoryCache = {
 
   stats: null,
 
-  analytics: null
-
-}
+  analytics: null,
+};

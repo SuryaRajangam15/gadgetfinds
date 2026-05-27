@@ -1,495 +1,326 @@
+import { useNavigate } from "react-router-dom";
 
-import { useNavigate } from 'react-router-dom'
-
-import { supabase } from '../lib/supabase'
-import { useAuth } from '../context/AuthContext'
-import ProductCard from '../components/ProductCard'
-import ProductFooter from '../components/footer/ProductFooter'
-import React, { useEffect, useState, useMemo } from 'react'
-import { productMemoryCache } from '../utils/productMemoryCache'
+import { supabase } from "../lib/supabase";
+import { useAuth } from "../context/AuthContext";
+import ProductCard from "../components/ProductCard";
+import ProductFooter from "../components/footer/ProductFooter";
+import React, { useEffect, useState, useMemo } from "react";
+import { productMemoryCache } from "../utils/productMemoryCache";
 
 export default function Products() {
+  const [products, setP] = useState([]);
 
-  const [products, setP] = useState([])
+  const [cats, setC] = useState([]);
 
-const [cats, setC] = useState([])
+  const [loading, setL] = useState(true);
 
-const [loading, setL] = useState(true)
+  const { isAdmin } = useAuth();
+  const [q, setQ] = useState("");
+  const [cat, setCat] = useState("");
+  const [sort, setSort] = useState("newest");
 
-  const { isAdmin } = useAuth()
-  const [q, setQ] = useState('')
-  const [cat, setCat] = useState('')
-  const [sort, setSort] = useState('newest')
+  const navigate = useNavigate();
 
-  const navigate = useNavigate()
+  const [currentPage, setCurrentPage] = useState(1);
 
-  const [currentPage, setCurrentPage] =
-  useState(1)
-
-  const productsPerPage = 12
-
+  const productsPerPage = 12;
 
   useEffect(() => {
+    async function loadProducts() {
+      try {
+        // MEMORY CACHE
+        if (productMemoryCache.products) {
+          setP(productMemoryCache.products);
 
-  async function loadProducts() {
+          setC(productMemoryCache.categories || []);
 
-    try {
+          setL(false);
 
-      // MEMORY CACHE
-      if (
-        productMemoryCache.products
-      ) {
+          return;
+        }
 
-        setP(
-          productMemoryCache.products
-        )
-
-        setC(
-          productMemoryCache.categories || []
-        )
-
-        setL(false)
-
-        return
-      }
-
-      // FETCH PRODUCTS
-      const [p, c] = await Promise.all([
-
-        supabase
-          .from('products')
-          .select(`
+        // FETCH PRODUCTS
+        const [p, c] = await Promise.all([
+          supabase
+            .from("products")
+            .select(
+              `
             *,
             categories(
               id,
               name,
               icon
             )
-          `)
-          .order(
-            'created_at',
-            {
-              ascending:false
-            }
-          ),
+          `,
+            )
+            .order("created_at", {
+              ascending: false,
+            }),
 
-        supabase
-          .from('categories')
-          .select('*')
+          supabase.from("categories").select("*"),
+        ]);
 
-      ])
+        const freshProducts = p.data || [];
 
-      const freshProducts =
-        p.data || []
+        const freshCats = c.data || [];
 
-      const freshCats =
-        c.data || []
+        // UPDATE UI
+        setP(freshProducts);
 
-      // UPDATE UI
-      setP(freshProducts)
+        setC(freshCats);
 
-      setC(freshCats)
+        // MEMORY CACHE
+        productMemoryCache.products = freshProducts;
 
-      // MEMORY CACHE
-      productMemoryCache.products =
-        freshProducts
-
-      productMemoryCache.categories =
-        freshCats
-
-    } catch(err) {
-
-      console.error(err)
-
-    } finally {
-
-      setL(false)
-
+        productMemoryCache.categories = freshCats;
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setL(false);
+      }
     }
 
-  }
+    loadProducts();
+  }, []);
 
-  loadProducts()
+  const list = useMemo(() => {
+    return products
 
-}, [])
+      .filter((p) => {
+        if (q) {
+          const lq = q.toLowerCase();
 
-const list = useMemo(() => {
-
-  return products
-
-    .filter(p => {
-
-      if (q) {
-
-        const lq = q.toLowerCase()
-
-        if (
-          !p.name.toLowerCase().includes(lq) &&
-          !p.description?.toLowerCase().includes(lq)
-        ) {
-          return false
+          if (
+            !p.name.toLowerCase().includes(lq) &&
+            !p.description?.toLowerCase().includes(lq)
+          ) {
+            return false;
+          }
         }
 
-      }
+        if (cat && String(p.category_id) !== String(cat)) {
+          return false;
+        }
 
-      if (
-        cat &&
-        String(p.category_id) !== String(cat)
-      ) {
-        return false
-      }
+        return true;
+      })
 
-      return true
+      .sort((a, b) => {
+        if (sort === "az") {
+          return a.name.localeCompare(b.name);
+        }
 
-    })
+        if (sort === "za") {
+          return b.name.localeCompare(a.name);
+        }
 
-    .sort((a,b) => {
+        if (sort === "oldest") {
+          return new Date(a.created_at) - new Date(b.created_at);
+        }
 
-      if (sort === 'az') {
-        return a.name.localeCompare(b.name)
-      }
+        return new Date(b.created_at) - new Date(a.created_at);
+      });
+  }, [products, q, cat, sort]);
 
-      if (sort === 'za') {
-        return b.name.localeCompare(a.name)
-      }
+  const lastIndex = currentPage * productsPerPage;
 
-      if (sort === 'oldest') {
-        return (
-          new Date(a.created_at) -
-          new Date(b.created_at)
-        )
-      }
+  const firstIndex = lastIndex - productsPerPage;
 
-      return (
-        new Date(b.created_at) -
-        new Date(a.created_at)
-      )
+  const currentProducts = list.slice(firstIndex, lastIndex);
 
-    })
-
-}, [products, q, cat, sort])
-
-    const lastIndex =
-  currentPage * productsPerPage
-
-const firstIndex =
-  lastIndex - productsPerPage
-
-const currentProducts =
-  list.slice(
-    firstIndex,
-    lastIndex
-  )
-
-const totalPages =
-  Math.ceil(
-    list.length /
-    productsPerPage
-  )
+  const totalPages = Math.ceil(list.length / productsPerPage);
 
   return (
     <>
-
       {/* HERO */}
       <div className="page-header">
-
         <div className="container">
-
           <div
             style={{
-              display:'flex',
-              justifyContent:'space-between',
-              alignItems:'flex-end',
-              gap:20,
-              flexWrap:'wrap'
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "flex-end",
+              gap: 20,
+              flexWrap: "wrap",
             }}
           >
-
             <div>
+              <div className="section-label">🛍️ All Products</div>
 
-              <div className="section-label">
-                🛍️ All Products
-              </div>
-
-              <h1 className="section-title">
-                Browse Gadgets
-              </h1>
+              <h1 className="section-title">Browse Gadgets</h1>
 
               <p className="section-sub">
                 Every product links directly to Amazon.
               </p>
-
             </div>
 
             {isAdmin && (
-
-  <button
-    className="btn btn-primary"
-    onClick={() => navigate('/admin/products')}
-  >
-    + Add Product
-  </button>
-
-)}
-
+              <button
+                className="btn btn-primary"
+                onClick={() => navigate("/admin/products")}
+              >
+                + Add Product
+              </button>
+            )}
           </div>
-
         </div>
-
       </div>
 
       {/* FILTER SECTION */}
       <div
         className="container"
         style={{
-          paddingTop:0,
-          paddingBottom:40
+          paddingTop: 0,
+          paddingBottom: 40,
         }}
       >
-
         <div className="pf-wrap">
-
           <div className="pf-bar">
-
             {/* SEARCH */}
             <div className="pf-search-wrap">
-
-              <span className="pf-search-icon">
-                🔍
-              </span>
+              <span className="pf-search-icon">🔍</span>
 
               <input
                 className="pf-search"
                 placeholder="Search gadgets..."
                 value={q}
-                onChange={e => setQ(e.target.value)}
+                onChange={(e) => setQ(e.target.value)}
               />
-
             </div>
 
             {/* CATEGORY */}
             <div className="pf-select-wrap">
-
-              <span className="pf-select-icon">
-                🗂️
-              </span>
+              <span className="pf-select-icon">🗂️</span>
 
               <select
                 className="pf-select"
                 value={cat}
-                onChange={e => setCat(e.target.value)}
+                onChange={(e) => setCat(e.target.value)}
               >
+                <option value="">All Categories</option>
 
-                <option value="">
-                  All Categories
-                </option>
-
-                {cats.map(c => (
-
-                  <option
-                    key={c.id}
-                    value={c.id}
-                  >
+                {cats.map((c) => (
+                  <option key={c.id} value={c.id}>
                     {c.icon} {c.name}
                   </option>
-
                 ))}
-
               </select>
-
             </div>
-                
-                {/* SORT */}
-<div className="pf-select-wrap">
 
-  <span className="pf-select-icon">
-    🔥
-  </span>
+            {/* SORT */}
+            <div className="pf-select-wrap">
+              <span className="pf-select-icon">🔥</span>
 
-  <select
-    className="pf-select"
-    value={sort}
-    onChange={e => setSort(e.target.value)}
-  >
+              <select
+                className="pf-select"
+                value={sort}
+                onChange={(e) => setSort(e.target.value)}
+              >
+                <option value="newest">Newest First</option>
 
-    <option value="newest">
-      Newest First
-    </option>
+                <option value="popular">Most Clicked</option>
 
-    <option value="popular">
-      Most Clicked
-    </option>
+                <option value="oldest">Oldest First</option>
 
-    <option value="oldest">
-      Oldest First
-    </option>
+                <option value="az">A → Z</option>
 
-    <option value="az">
-      A → Z
-    </option>
-
-    <option value="za">
-      Z → A
-    </option>
-
-  </select>
-
-</div>
+                <option value="za">Z → A</option>
+              </select>
+            </div>
 
             {/* CLEAR */}
             <button
               className="pf-clear"
               onClick={() => {
-
-                setQ('')
-                setCat('')
-                setSort('newest')
-
+                setQ("");
+                setCat("");
+                setSort("newest");
               }}
             >
               🧹 Clear
             </button>
-
           </div>
 
           {/* RESULTS */}
           <div className="pf-results">
-
             <span className="pf-count">
-
-              Showing
-              {' '}
-
-              <strong>
-                {list.length}
-              </strong>
-
-              {' '}
-              gadget
-              {list.length !== 1 ? 's' : ''}
-
+              Showing <strong>{list.length}</strong> gadget
+              {list.length !== 1 ? "s" : ""}
             </span>
-
           </div>
-
         </div>
 
         {/* PRODUCTS */}
         {loading && products.length === 0 ? (
-
-  <div className="products-grid">
-
-    {[1,2,3,4,5,6].map(i => (
-
-      <div
-        key={i}
-        className="skeleton-card"
-        style={{
-          height:'320px',
-          borderRadius:'24px',
-          background:'#f3f4f6'
-        }}
-      />
-
-    ))}
-
-  </div>
-
-) : list.length === 0 ? (
-
-          <div className="empty-state">
-
-            <div className="empty-state-icon">
-              🔍
-            </div>
-
-            <h3>
-              No gadgets found
-            </h3>
-
-            <p>
-              Try changing your filters.
-            </p>
-
-          </div>
-
-        ) : (
-
           <div className="products-grid">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <div
+                key={i}
+                className="skeleton-card"
+                style={{
+                  height: "320px",
+                  borderRadius: "24px",
+                  background: "#f3f4f6",
+                }}
+              />
+            ))}
+          </div>
+        ) : list.length === 0 ? (
+          <div className="empty-state">
+            <div className="empty-state-icon">🔍</div>
 
-            {currentProducts.map(p => (
+            <h3>No gadgets found</h3>
 
+            <p>Try changing your filters.</p>
+          </div>
+        ) : (
+          <div className="products-grid">
+            {currentProducts.map((p) => (
               <ProductCard
                 key={p.id}
                 product={p}
                 categoryName={p.categories?.name}
               />
-
             ))}
-
           </div>
-
         )}
 
         {/* PAGINATION */}
 
-{totalPages > 1 && (
+        {totalPages > 1 && (
+          <div className="products-pagination-wrap">
+            <button
+              className="products-page-nav"
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage((prev) => prev - 1)}
+            >
+              &lt;
+            </button>
 
-  <div className="products-pagination-wrap">
+            <div className="products-pagination">
+              {Array.from({ length: totalPages }, (_, i) => (
+                <button
+                  key={i}
+                  className={currentPage === i + 1 ? "active" : ""}
+                  onClick={() => setCurrentPage(i + 1)}
+                >
+                  {i + 1}
+                </button>
+              ))}
+            </div>
 
-    <button
-      className="products-page-nav"
-      disabled={currentPage === 1}
-      onClick={() =>
-        setCurrentPage(prev => prev - 1)
-      }
-    >
-      &lt;
-    </button>
-
-    <div className="products-pagination">
-
-      {Array.from(
-        { length: totalPages },
-        (_,i) => (
-
-          <button
-            key={i}
-            className={
-              currentPage === i + 1
-                ? 'active'
-                : ''
-            }
-            onClick={() =>
-              setCurrentPage(i + 1)
-            }
-          >
-            {i + 1}
-          </button>
-
-        )
-      )}
-
-    </div>
-
-    <button
-      className="products-page-nav"
-      disabled={currentPage === totalPages}
-      onClick={() =>
-        setCurrentPage(prev => prev + 1)
-      }
-    >
-      &gt;
-    </button>
-
-  </div>
-
-)}
-
+            <button
+              className="products-page-nav"
+              disabled={currentPage === totalPages}
+              onClick={() => setCurrentPage((prev) => prev + 1)}
+            >
+              &gt;
+            </button>
+          </div>
+        )}
       </div>
 
-      <ProductFooter/>
-
+      <ProductFooter />
     </>
-  )
+  );
 }
