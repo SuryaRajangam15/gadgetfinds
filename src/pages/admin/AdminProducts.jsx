@@ -7,6 +7,7 @@ const BLANK = {
   description: "",
   affiliate_link: "",
   category_id: "",
+  store: "Amazon",
 };
 
 export default function AdminProducts() {
@@ -89,7 +90,8 @@ export default function AdminProducts() {
     const e = {};
     if (!form.name.trim()) e.name = "Product name required";
     if (!form.description.trim()) e.description = "Description required";
-    if (!form.affiliate_link.trim()) e.affiliate_link = "Amazon link required";
+    if (!form.affiliate_link.trim())
+      e.affiliate_link = "Affiliate link required";
     setErrors(e);
     return Object.keys(e).length === 0;
   }
@@ -102,6 +104,7 @@ export default function AdminProducts() {
       description: form.description.trim(),
       affiliate_link: form.affiliate_link.trim(),
       category_id: form.category_id || null,
+      store: form.store,
       image_urls: images.map((i) => i.src),
     };
     if (editId) {
@@ -135,6 +138,7 @@ export default function AdminProducts() {
       description: p.description || "",
       affiliate_link: p.affiliate_link || "",
       category_id: p.category_id || "",
+      store: p.store || "Amazon",
     });
     setEditId(p.id);
     setImages((p.image_urls || []).map((s) => ({ src: s, type: "url" })));
@@ -193,7 +197,28 @@ export default function AdminProducts() {
             <div className="form-error">{errors.description}</div>
           )}
         </div>
+        <div className="form-group">
+          <label className="form-label">Store</label>
 
+          <select
+            className="form-select"
+            value={form.store}
+            onChange={(e) =>
+              setForm({
+                ...form,
+                store: e.target.value,
+              })
+            }
+          >
+            <option value="Amazon">Amazon</option>
+
+            <option value="Flipkart">Flipkart</option>
+
+            <option value="Myntra">Myntra</option>
+
+            <option value="AJIO">AJIO</option>
+          </select>
+        </div>
         <div className="form-group">
           <label className="form-label">📷 Product Images (up to 5)</label>
           <div
@@ -250,10 +275,10 @@ export default function AdminProducts() {
         </div>
 
         <div className="form-group">
-          <label className="form-label">Amazon Affiliate Link *</label>
+          <label className="form-label">Affiliate Link *</label>
           <input
             className={"form-input" + (errors.affiliate_link ? " error" : "")}
-            placeholder="https://amzn.to/…"
+            placeholder="Paste affiliate link"
             value={form.affiliate_link}
             onChange={(e) =>
               setForm({ ...form, affiliate_link: e.target.value })

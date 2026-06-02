@@ -9,7 +9,7 @@ export default function ProductCard({ product, categoryName }) {
   async function handleBuy(e) {
     e.stopPropagation();
     await supabase.from("clicks").insert({ product_id: product.id });
-    window.open(product.affiliate_link || "https://amazon.in", "_blank");
+    window.open(product.affiliate_link || "product.affiliate_link", "_blank");
   }
 
   return (

@@ -150,7 +150,7 @@ export default function Products() {
               <h1 className="section-title">Browse Gadgets</h1>
 
               <p className="section-sub">
-                Every product links directly to Amazon.
+                Curated products from trusted stores.
               </p>
             </div>
 

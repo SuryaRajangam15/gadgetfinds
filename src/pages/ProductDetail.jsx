@@ -53,7 +53,7 @@ export default function ProductDetail() {
       product_id: p.id,
     });
 
-    window.open(p.affiliate_link || "https://amazon.in", "_blank");
+    window.open(p.affiliate_link || "#", "_blank");
   }
 
   if (loading) {
@@ -228,13 +228,15 @@ export default function ProductDetail() {
                   padding: "18px 20px",
                   marginBottom: 28,
                   display: "flex",
-                  gap: 20,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  gap: 32,
                   flexWrap: "wrap",
                 }}
               >
                 {[
-                  "🛡️ Genuine Amazon product",
-                  "🚚 Prime eligible",
+                  "🛡️ Verified product",
+                  "🚚 Quick shipping",
                   "↩️ Easy returns",
                 ].map((t) => (
                   <span
@@ -269,7 +271,7 @@ export default function ProductDetail() {
                     boxShadow: "0 4px 20px rgba(249,115,22,.4)",
                   }}
                 >
-                  🛒 Buy on Amazon →
+                  🛒 Buy This Product →
                 </button>
 
                 <p
@@ -334,10 +336,43 @@ export default function ProductDetail() {
                       )}
                     </div>
 
-                    <div className="prod-card-body">
+                    <div
+                      className="prod-card-body"
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                      }}
+                    >
                       <div className="prod-card-title">{r.name}</div>
 
                       <div className="prod-card-desc">{r.description}</div>
+
+                      <div
+                        className="prod-card-footer"
+                        style={{
+                          marginTop: "16px",
+                        }}
+                      >
+                        <button
+                          className="btn btn-ghost"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigate("/products/" + r.id);
+                          }}
+                        >
+                          Details
+                        </button>
+
+                        <button
+                          className="btn btn-orange"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            window.open(r.affiliate_link || "#", "_blank");
+                          }}
+                        >
+                          🛒 Buy
+                        </button>
+                      </div>
                     </div>
                   </div>
                 ))}

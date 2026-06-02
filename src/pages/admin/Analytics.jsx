@@ -271,7 +271,7 @@ export default function Analytics() {
                 icon: "🛒",
                 color: "#fff5ee",
                 val: totalClicks,
-                lbl: "Amazon Buy Clicks",
+                lbl: "Product Clicks",
               },
 
               {

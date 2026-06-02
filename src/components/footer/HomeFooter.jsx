@@ -16,8 +16,8 @@ export default function HomeFooter() {
             </div>
 
             <p className="footer-desc">
-              Trending budget tech gadgets curated by Surya. From Amazon smart
-              home picks to viral desk setups — all at unbeatable prices.
+              Trending budget tech gadgets curated by Surya. From smart home finds
+              to viral desk setups — all at unbeatable prices.
             </p>
 
             <div className="footer-social">

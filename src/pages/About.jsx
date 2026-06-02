@@ -65,7 +65,7 @@ export default function About() {
               margin: "0 auto",
             }}
           >
-            Budget Tech Gadgets Curator · Pinterest Creator · Amazon Enthusiast
+            Budget Tech Gadgets Curator · Pinterest Creator · Product Curator
           </p>
         </div>
       </div>
@@ -102,7 +102,7 @@ export default function About() {
           <div className="about-feature-card">
             <div className="about-feature-icon">🛍️</div>
 
-            <h3 className="about-feature-title">Amazon Curator</h3>
+            <h3 className="about-feature-title">Tech Curator</h3>
 
             <p className="about-feature-text">
               Only listing gadgets with 4★+ ratings & genuine reviews
@@ -142,8 +142,8 @@ export default function About() {
         >
           I started <strong>GadgetFinds.in</strong> because I was tired of
           overpaying for tech gadgets that were available for a fraction of the
-          price on Amazon. Every week I spend hours discovering the best budget
-          gadgets so you don't have to.
+          latest product price. Every week I spend hours discovering the best
+          budget gadgets so you don't have to.
         </p>
 
         <p
@@ -158,7 +158,7 @@ export default function About() {
           <strong>@budgettechsurya</strong> — grew into a community of over
           10,000 fellow gadget lovers. This website is the natural next step: a
           clean, simple place where you can browse everything I recommend, click
-          through to Amazon, and get the best deal.
+          through to the product page, and get the best deal.
         </p>
 
         {/* HOW */}
@@ -181,8 +181,8 @@ export default function About() {
           }}
         >
           Every product you see on GadgetFinds is something I personally
-          researched and believe offers genuine value. When you click "Buy on
-          Amazon", you'll be taken directly to the product page. I earn a small
+          researched and believe offers genuine value. When you click "View
+          Product", you'll be taken directly to the product page. I earn a small
           affiliate commission — this keeps the site running at no extra cost to
           you.
         </p>
@@ -206,8 +206,8 @@ export default function About() {
             marginBottom: 24,
           }}
         >
-          For daily gadget drops, viral finds, and the latest Amazon deals,
-          follow me on Pinterest:
+          For daily gadget drops, viral finds, and the latest deals, follow me
+          on Pinterest:
         </p>
 
         {/* BUTTON */}
@@ -243,8 +243,8 @@ export default function About() {
             lineHeight: 1.7,
           }}
         >
-          Affiliate Disclosure: GadgetFinds.in participates in the Amazon
-          Associates programme. Purchases through our links may earn us a
+          Affiliate Disclosure: GadgetFinds.pages.dev participates in the
+          affiliate programme. Purchases through our links may earn us a
           commission at no extra cost to you.
         </p>
       </div>

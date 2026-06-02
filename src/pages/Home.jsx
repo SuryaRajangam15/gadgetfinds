@@ -164,8 +164,8 @@ export default function Home() {
                 You'll Love
               </h1>
               <p className="hero-sub">
-                Hand-picked trending gadgets from Amazon — smart home, desk
-                setups, and viral finds at prices that make sense.
+                Hand-picked trending gadgets from trusted stores — smart home,
+                desk setups, and viral finds at prices that make sense.
               </p>
               <div className="hero-btns">
                 <Link to="/products" className="btn btn-primary btn-xl">
@@ -336,7 +336,7 @@ export default function Home() {
             </div>
             <div>
               <div className="stat-num">{totalClicks.toLocaleString()}</div>
-              <div className="stat-label">Amazon Clicks</div>
+              <div className="stat-label">Product Clicks</div>
             </div>
             <div>
               <div className="stat-num">10K+</div>
@@ -432,7 +432,7 @@ export default function Home() {
             Follow Surya on Pinterest
           </h2>
           <p style={{ color: "var(--muted)", fontSize: 17, marginBottom: 28 }}>
-            Daily gadget drops, viral finds &amp; Amazon deals.
+            Daily gadget drops, viral finds & smart deals.
           </p>
           <button
             className="btn btn-lg"

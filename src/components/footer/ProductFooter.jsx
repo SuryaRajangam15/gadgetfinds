@@ -14,7 +14,7 @@ export default function ProductFooter() {
             </p>
 
             <p className="product-footer-sub">
-              Affiliate links · Prices on Amazon
+              Affiliate links · Latest product prices
             </p>
           </div>
 
@@ -27,7 +27,7 @@ export default function ProductFooter() {
             </div>
 
             <p className="product-footer-desc">
-              Top gadgets handpicked by Surya · Direct Amazon links
+              Top gadgets handpicked by Surya · Direct product links
             </p>
 
             <div className="product-footer-links">
