@@ -70,7 +70,7 @@ export default function Navbar() {
             <div className="nav-logo-mark">⚡</div>
             <div>
               <div className="nav-logo-text">
-                <span>Gadget</span>Finds.in
+                <span>Gadget</span>Finds
               </div>
               <div className="nav-logo-sub">
                 by Surya • Budget Tech Gadgets 🔥
