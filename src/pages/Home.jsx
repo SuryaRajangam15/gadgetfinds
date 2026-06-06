@@ -295,7 +295,6 @@ export default function Home() {
                   style={{
                     height: "320px",
                     borderRadius: "24px",
-                    background: "#f3f4f6",
                   }}
                   className="skeleton-card"
                 />
@@ -383,7 +382,6 @@ export default function Home() {
                   style={{
                     height: "140px",
                     borderRadius: "24px",
-                    background: "#f3f4f6",
                   }}
                 />
               ))}
@@ -414,8 +412,8 @@ export default function Home() {
 
       <div
         style={{
-          background: "linear-gradient(135deg,#fff5f5,#fff)",
-          borderTop: "1px solid #fecaca",
+          background: "var(--surface)",
+          borderTop: "1px solid var(--border)",
           padding: "52px 0",
           textAlign: "center",
         }}

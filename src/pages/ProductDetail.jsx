@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabase";
-import Footer from "../components/footer/HomeFooter";
+import Footer from "../components/footer/ProductFooter";
 
 export default function ProductDetail() {
   const { id } = useParams();
@@ -280,8 +280,8 @@ export default function ProductDetail() {
                     color: "var(--muted)",
                     textAlign: "center",
                     padding: "10px 14px",
-                    background: "#fffbf5",
-                    border: "1px solid #fed7aa",
+                    background: "var(--surface2)",
+                    border: "1px solid var(--border)",
                     borderRadius: 10,
                     lineHeight: 1.6,
                   }}

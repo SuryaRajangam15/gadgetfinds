@@ -160,7 +160,6 @@ export default function Categories() {
                 style={{
                   height: "180px",
                   borderRadius: "24px",
-                  background: "#f3f4f6",
                 }}
               />
             ))}

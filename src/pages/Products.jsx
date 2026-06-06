@@ -260,7 +260,6 @@ export default function Products() {
                 style={{
                   height: "320px",
                   borderRadius: "24px",
-                  background: "#f3f4f6",
                 }}
               />
             ))}

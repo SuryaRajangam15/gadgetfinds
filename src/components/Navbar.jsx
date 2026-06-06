@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { toast } from "../hooks/useToast";
+import useTheme from "../hooks/useTheme";
 
 export default function Navbar() {
   const { isAdmin, signOut, handleLogoClick, signIn } = useAuth();
@@ -14,6 +15,7 @@ export default function Navbar() {
   const navigate = useNavigate();
   const [mobileMenu, setMobileMenu] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
     const h = () => setScrolled(window.scrollY > 10);
@@ -114,6 +116,9 @@ export default function Navbar() {
             <Link to="/products" className="btn btn-primary btn-sm">
               Browse Gadgets
             </Link>
+            <button className="btn btn-ghost theme-btn" onClick={toggleTheme}>
+              {theme === "light" ? "🌙" : "☀️"}
+            </button>
           </div>
         </div>
       </nav>
@@ -146,6 +151,10 @@ export default function Navbar() {
         </div>
       )}
 
+      {/* MOBILE THEME TOGGLE */}
+      <button className="mobile-theme-toggle" onClick={toggleTheme}>
+        {theme === "light" ? "🌙" : "☀️"}
+      </button>
       {/* MOBILE BOTTOM NAV */}
       <div className="mobile-bottom-nav">
         <NavLink

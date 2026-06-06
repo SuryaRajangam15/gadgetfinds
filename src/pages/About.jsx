@@ -8,7 +8,7 @@ export default function About() {
       <div
         style={{
           padding: "92px 0 46px",
-          background: "linear-gradient(160deg,#f5f7fc,#f8f9fd)",
+          background: "linear-gradient(160deg,var(--surface2),var(--bg))",
           textAlign: "center",
         }}
       >
