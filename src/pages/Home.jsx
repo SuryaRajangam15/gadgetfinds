@@ -334,8 +334,8 @@ export default function Home() {
               <div className="stat-label">Categories</div>
             </div>
             <div>
-              <div className="stat-num">{totalClicks.toLocaleString()}</div>
-              <div className="stat-label">Product Clicks</div>
+              <div className="stat-num">100%</div>
+              <div className="stat-label">Handpicked Gadgets</div>
             </div>
             <div>
               <div className="stat-num">10K+</div>
