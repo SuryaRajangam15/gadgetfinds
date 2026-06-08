@@ -18,7 +18,7 @@ ${budget}
 ${message || "No extra details"}
 
 🌐 From:
-GadgetFinds.in
+gadgetfinds.pages.dev
 `;
 
   const response = await fetch(

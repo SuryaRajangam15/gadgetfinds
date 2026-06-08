@@ -15,7 +15,7 @@ export default function Analytics() {
 
   const PRO_PAGE_SIZE = 10;
 
-  const CAT_PAGE_SIZE = 10;
+  const CAT_PAGE_SIZE = 5;
 
   const navigate = useNavigate();
 
