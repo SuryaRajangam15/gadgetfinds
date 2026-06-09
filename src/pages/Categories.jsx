@@ -1,32 +1,58 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 import ProductCard from "../components/ProductCard";
 import CategoryFooter from "../components/footer/CategoryFooter";
 import { useAuth } from "../context/AuthContext";
+import { productMemoryCache } from "../utils/productMemoryCache";
 
 export default function Categories() {
   const navigate = useNavigate();
   const { isAdmin } = useAuth();
-  const cachedCats = JSON.parse(
-    localStorage.getItem("categories_page_cache") || "[]",
-  );
+  const [cats, setCats] = useState(productMemoryCache.categories || []);
 
-  const cachedProducts = JSON.parse(
-    localStorage.getItem("categories_products_cache") || "[]",
-  );
+  const [products, setProducts] = useState(productMemoryCache.products || []);
 
-  const [cats, setCats] = useState(cachedCats);
-
-  const [products, setProducts] = useState(cachedProducts);
+  const [loading, setL] = useState(!productMemoryCache.categories);
 
   const [active, setActive] = useState(null);
 
-  const [loading, setL] = useState(cachedCats.length === 0);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+  function handleClickOutside(event) {
+    if (
+      dropdownRef.current &&
+      !dropdownRef.current.contains(event.target)
+    ) {
+      setDropdownOpen(false);
+    }
+  }
+
+  document.addEventListener(
+    "mousedown",
+    handleClickOutside
+  );
+
+  return () => {
+    document.removeEventListener(
+      "mousedown",
+      handleClickOutside
+    );
+  };
+}, []);
 
   useEffect(() => {
     async function loadData() {
       try {
+        if (productMemoryCache.categories && productMemoryCache.products) {
+          setCats(productMemoryCache.categories);
+          setProducts(productMemoryCache.products);
+          setL(false);
+          return;
+        }
         const [c, p] = await Promise.all([
           supabase.from("categories").select("*").order("name"),
 
@@ -54,15 +80,8 @@ export default function Categories() {
         setCats(freshCats);
         setProducts(freshProducts);
 
-        localStorage.setItem(
-          "categories_page_cache",
-          JSON.stringify(freshCats),
-        );
-
-        localStorage.setItem(
-          "categories_products_cache",
-          JSON.stringify(freshProducts),
-        );
+        productMemoryCache.categories = freshCats;
+        productMemoryCache.products = freshProducts;
       } catch (err) {
         console.error(err);
       } finally {
@@ -72,44 +91,133 @@ export default function Categories() {
 
     loadData();
   }, []);
-
   const shown = active
     ? products.filter((p) => String(p.category_id) === String(active))
     : [];
+  const productCounts = useMemo(() => {
+    const counts = {};
+
+    products.forEach((p) => {
+      counts[p.category_id] = (counts[p.category_id] || 0) + 1;
+    });
+
+    return counts;
+  }, [products]);
 
   return (
     <>
       {/* HEADER */}
       <div className="page-header">
         <div className="container">
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "flex-end",
-              gap: 20,
-              flexWrap: "wrap",
-            }}
+          <div className="category-summary">
+  <div className="section-label">
+    📂 Browse
+  </div>
+
+  <h1 className="section-title">
+    All Categories
+  </h1>
+
+  <p className="section-sub">
+    Explore gadgets by type.
+  </p>
+
+  <div className="category-header-row">
+
+    <div className="category-stats">
+      <span>📂 {cats.length} Categories</span>
+
+      <span>📦 {products.length} Products</span>
+
+      <span>🔥 Updated Weekly</span>
+    </div>
+
+    <div className="category-filter-wrap">
+
+      <div
+        className="category-dropdown"
+        ref={dropdownRef}
+      >
+        <button
+          className="category-dropdown-trigger"
+          onClick={() =>
+            setDropdownOpen(!dropdownOpen)
+          }
+        >
+          <span>
+            {active
+              ? `${cats.find(
+                  (c) =>
+                    String(c.id) === String(active)
+                )?.icon} ${
+                  cats.find(
+                    (c) =>
+                      String(c.id) === String(active)
+                  )?.name
+                }`
+              : "📂 All Categories"}
+          </span>
+
+          <span
+            className={
+              dropdownOpen ? "rotate" : ""
+            }
           >
-            {/* LEFT */}
-            <div>
-              <div className="section-label">📂 Browse</div>
+            ▼
+          </span>
+        </button>
 
-              <h1 className="section-title">All Categories</h1>
+        {dropdownOpen && (
+          <div className="category-dropdown-menu">
 
-              <p className="section-sub">Explore gadgets by type.</p>
-            </div>
+            <button
+              className={!active ? "active" : ""}
+              onClick={() => {
+                setActive(null);
+                setDropdownOpen(false);
+              }}
+            >
+              📂 All Categories
+            </button>
 
-            {/* ADD CATEGORY BUTTON */}
-            {isAdmin && (
+            {cats.map((c) => (
               <button
-                className="btn btn-primary"
-                onClick={() => navigate("/admin/categories")}
+                key={c.id}
+                className={
+                  String(active) ===
+                  String(c.id)
+                    ? "active"
+                    : ""
+                }
+                onClick={() => {
+                  setActive(c.id);
+                  setDropdownOpen(false);
+                }}
               >
-                + Add Category
+                {c.icon} {c.name}
               </button>
-            )}
+            ))}
+
           </div>
+        )}
+
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+{isAdmin && (
+  <button
+    className="btn btn-primary"
+    onClick={() =>
+      navigate("/admin/categories")
+    }
+  >
+    + Add Category
+  </button>
+)}
         </div>
       </div>
 
@@ -117,39 +225,12 @@ export default function Categories() {
       <div
         className="container"
         style={{
-          paddingTop: 24,
+          paddingTop: 5,
           paddingBottom: 40,
           minHeight: "45vh",
         }}
       >
-        {/* FILTER PILLS */}
-        <div className="cpf-pill-bar">
-          <button
-            className={"cpf-pill" + (!active ? " active" : "")}
-            onClick={() => setActive(null)}
-          >
-            All
-            <span className="cpf-pill-count">{cats.length}</span>
-          </button>
-
-          {cats.map((c) => (
-            <button
-              key={c.id}
-              className={
-                "cpf-pill" + (String(active) === String(c.id) ? " active" : "")
-              }
-              onClick={() => setActive(c.id)}
-            >
-              {c.icon} {c.name}
-              <span className="cpf-pill-count">
-                {
-                  products.filter((p) => String(p.category_id) === String(c.id))
-                    .length
-                }
-              </span>
-            </button>
-          ))}
-        </div>
+        
 
         {loading ? (
           <div className="cat-grid" style={{ marginTop: 24 }}>
@@ -176,15 +257,16 @@ export default function Categories() {
           ) : (
             <div className="cat-grid" style={{ marginTop: 24 }}>
               {cats.map((c) => {
-                const cnt = products.filter(
-                  (p) => String(p.category_id) === String(c.id),
-                ).length;
+                const cnt = productCounts[c.id] || 0;
 
                 return (
                   <div
                     key={c.id}
                     className="cat-card"
-                    onClick={() => setActive(c.id)}
+                    onClick={() => {
+  setActive(c.id);
+  setDropdownOpen(false);
+}}
                   >
                     <div className="cat-icon-wrap">{c.icon || "📦"}</div>
 
