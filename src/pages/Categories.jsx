@@ -114,13 +114,24 @@ export default function Categories() {
     📂 Browse
   </div>
 
+<div className="category-title-row">
   <h1 className="section-title">
     All Categories
   </h1>
 
-  <p className="section-sub">
-    Explore gadgets by type.
-  </p>
+  {isAdmin && (
+    <button
+      className="btn btn-primary"
+      onClick={() => navigate("/admin/categories")}
+    >
+      + Add Category
+    </button>
+  )}
+</div>
+
+<p className="section-sub">
+  Explore gadgets by type.
+</p>
 
   <div className="category-header-row">
 
@@ -208,16 +219,6 @@ export default function Categories() {
   </div>
 </div>
 
-{isAdmin && (
-  <button
-    className="btn btn-primary"
-    onClick={() =>
-      navigate("/admin/categories")
-    }
-  >
-    + Add Category
-  </button>
-)}
         </div>
       </div>
 
