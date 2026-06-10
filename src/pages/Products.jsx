@@ -136,27 +136,23 @@ export default function Products() {
       <div className="page-header">
         <div className="container">
           <div>
-  <div className="section-label">🛍️ All Products</div>
+            <div className="section-label">🛍️ All Products</div>
 
-  <div className="products-title-row">
-    <h1 className="section-title">
-      Browse Gadgets
-    </h1>
+            <div className="products-title-row">
+              <h1 className="section-title">Browse Gadgets</h1>
 
-    {isAdmin && (
-      <button
-        className="btn btn-primary"
-        onClick={() => navigate("/admin/products")}
-      >
-        + Add Product
-      </button>
-    )}
-  </div>
+              {isAdmin && (
+                <button
+                  className="btn btn-primary"
+                  onClick={() => navigate("/admin/products")}
+                >
+                  + Add Product
+                </button>
+              )}
+            </div>
 
-  <p className="section-sub">
-    Curated products from trusted stores.
-  </p>
-</div>
+            <p className="section-sub">Curated products from trusted stores.</p>
+          </div>
         </div>
       </div>
 

@@ -22,27 +22,18 @@ export default function Categories() {
   const dropdownRef = useRef(null);
 
   useEffect(() => {
-  function handleClickOutside(event) {
-    if (
-      dropdownRef.current &&
-      !dropdownRef.current.contains(event.target)
-    ) {
-      setDropdownOpen(false);
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false);
+      }
     }
-  }
 
-  document.addEventListener(
-    "mousedown",
-    handleClickOutside
-  );
+    document.addEventListener("mousedown", handleClickOutside);
 
-  return () => {
-    document.removeEventListener(
-      "mousedown",
-      handleClickOutside
-    );
-  };
-}, []);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   useEffect(() => {
     async function loadData() {
@@ -110,115 +101,85 @@ export default function Categories() {
       <div className="page-header">
         <div className="container">
           <div className="category-summary">
-  <div className="section-label">
-    📂 Browse
-  </div>
+            <div className="section-label">📂 Browse</div>
 
-<div className="category-title-row">
-  <h1 className="section-title">
-    All Categories
-  </h1>
+            <div className="category-title-row">
+              <h1 className="section-title">All Categories</h1>
 
-  {isAdmin && (
-    <button
-      className="btn btn-primary"
-      onClick={() => navigate("/admin/categories")}
-    >
-      + Add Category
-    </button>
-  )}
-</div>
+              {isAdmin && (
+                <button
+                  className="btn btn-primary"
+                  onClick={() => navigate("/admin/categories")}
+                >
+                  + Add Category
+                </button>
+              )}
+            </div>
 
-<p className="section-sub">
-  Explore gadgets by type.
-</p>
+            <p className="section-sub">Explore gadgets by type.</p>
 
-  <div className="category-header-row">
+            <div className="category-header-row">
+              <div className="category-stats">
+                <span>📂 {cats.length} Categories</span>
 
-    <div className="category-stats">
-      <span>📂 {cats.length} Categories</span>
+                <span>📦 {products.length} Products</span>
 
-      <span>📦 {products.length} Products</span>
+                <span>🔥 Updated Weekly</span>
+              </div>
 
-      <span>🔥 Updated Weekly</span>
-    </div>
+              <div className="category-filter-wrap">
+                <div className="category-dropdown" ref={dropdownRef}>
+                  <button
+                    className="category-dropdown-trigger"
+                    onClick={() => setDropdownOpen(!dropdownOpen)}
+                  >
+                    <span>
+                      {active
+                        ? `${
+                            cats.find((c) => String(c.id) === String(active))
+                              ?.icon
+                          } ${
+                            cats.find((c) => String(c.id) === String(active))
+                              ?.name
+                          }`
+                        : "📂 All Categories"}
+                    </span>
 
-    <div className="category-filter-wrap">
+                    <span className={dropdownOpen ? "rotate" : ""}>▼</span>
+                  </button>
 
-      <div
-        className="category-dropdown"
-        ref={dropdownRef}
-      >
-        <button
-          className="category-dropdown-trigger"
-          onClick={() =>
-            setDropdownOpen(!dropdownOpen)
-          }
-        >
-          <span>
-            {active
-              ? `${cats.find(
-                  (c) =>
-                    String(c.id) === String(active)
-                )?.icon} ${
-                  cats.find(
-                    (c) =>
-                      String(c.id) === String(active)
-                  )?.name
-                }`
-              : "📂 All Categories"}
-          </span>
+                  {dropdownOpen && (
+                    <div className="category-dropdown-menu">
+                      <button
+                        className={!active ? "active" : ""}
+                        onClick={() => {
+                          setActive(null);
+                          setDropdownOpen(false);
+                        }}
+                      >
+                        📂 All Categories
+                      </button>
 
-          <span
-            className={
-              dropdownOpen ? "rotate" : ""
-            }
-          >
-            ▼
-          </span>
-        </button>
-
-        {dropdownOpen && (
-          <div className="category-dropdown-menu">
-
-            <button
-              className={!active ? "active" : ""}
-              onClick={() => {
-                setActive(null);
-                setDropdownOpen(false);
-              }}
-            >
-              📂 All Categories
-            </button>
-
-            {cats.map((c) => (
-              <button
-                key={c.id}
-                className={
-                  String(active) ===
-                  String(c.id)
-                    ? "active"
-                    : ""
-                }
-                onClick={() => {
-                  setActive(c.id);
-                  setDropdownOpen(false);
-                }}
-              >
-                {c.icon} {c.name}
-              </button>
-            ))}
-
+                      {cats.map((c) => (
+                        <button
+                          key={c.id}
+                          className={
+                            String(active) === String(c.id) ? "active" : ""
+                          }
+                          onClick={() => {
+                            setActive(c.id);
+                            setDropdownOpen(false);
+                          }}
+                        >
+                          {c.icon} {c.name}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
           </div>
-        )}
-
-      </div>
-
-    </div>
-
-  </div>
-</div>
-
         </div>
       </div>
 
@@ -231,8 +192,6 @@ export default function Categories() {
           minHeight: "45vh",
         }}
       >
-        
-
         {loading ? (
           <div className="cat-grid" style={{ marginTop: 24 }}>
             {[1, 2, 3, 4, 5, 6].map((i) => (
@@ -265,9 +224,9 @@ export default function Categories() {
                     key={c.id}
                     className="cat-card"
                     onClick={() => {
-  setActive(c.id);
-  setDropdownOpen(false);
-}}
+                      setActive(c.id);
+                      setDropdownOpen(false);
+                    }}
                   >
                     <div className="cat-icon-wrap">{c.icon || "📦"}</div>
 
