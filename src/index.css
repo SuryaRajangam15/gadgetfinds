@@ -3088,7 +3088,7 @@ footer {
   right: 20px;
   bottom: 22px;
 
-  z-index: 9998;
+  z-index: 999;
 
   border: none;
 
@@ -3287,7 +3287,7 @@ footer {
 
     font-size: 12px;
 
-    z-index: 9998;
+    z-index: 999;
   }
 
   .request-modal {
@@ -3616,7 +3616,7 @@ footer {
   border-radius: 18px;
   overflow-y: auto;
   max-height: 280px;
-  z-index: 999999;
+  z-index: 20;
   opacity: 1 !important;
   isolation: isolate;
   box-shadow: 0 18px 40px rgba(0, 0, 0, 0.25);
@@ -3691,7 +3691,7 @@ footer {
 
 .category-filter-wrap {
   position: relative;
-  z-index: 10000;
+  z-index: 10;
 }
 
 .category-title-row {
@@ -3709,7 +3709,8 @@ footer {
 @media (max-width: 768px) {
   .category-title-row {
     display: flex;
-    flex-direction: row;        /* Keep title and button in one row */
+    flex-direction: row;
+    /* Keep title and button in one row */
     justify-content: space-between;
     align-items: center;
     gap: 12px;
@@ -3727,7 +3728,8 @@ footer {
 
   .category-title-row .section-title {
     margin: 0;
-    font-size: 2rem;            /* Adjust if needed */
+    font-size: 2rem;
+    /* Adjust if needed */
   }
 }
 
